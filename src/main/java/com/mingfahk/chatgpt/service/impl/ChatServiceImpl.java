@@ -1,5 +1,6 @@
 package com.mingfahk.chatgpt.service.impl;
 
+import com.mingfahk.chatgpt.pojo.bo.CacheQuestion;
 import com.mingfahk.chatgpt.pojo.req.ChatRequest;
 import com.mingfahk.chatgpt.pojo.req.ChatRequestList;
 import com.mingfahk.chatgpt.pojo.res.ChatResponse;
@@ -12,6 +13,7 @@ import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,31 +39,40 @@ public class ChatServiceImpl implements ChatService {
     public ChatResponse chat(ChatRequestList chatRequest) {
         String id = chatRequest.getId() == null ? System.currentTimeMillis() + "" : chatRequest.getId();
         OpenAiClient openAiClient = buildClient(chatRequest.getKey());
-
-        List<Message> msgList = new ArrayList<>();
-        if (CONTEXT_MAP.keySet().contains(id)) {
-
-        }
-
+        // 当前问题
+        Message m = Message.builder().role(Message.Role.USER).content(chatRequest.getPrompt()).build();
+        // 请求参数
+        ChatCompletion chatCompletion;
+        //响应结果
+        ChatCompletionResponse chatCompletionResponse = null;
+// 本地缓存
+        CacheQuestion cacheQuestion;
         // 如果是连续对话
         if (chatRequest.getIs_continue()) {
-            List<String> contextList = CONTEXT_MAP.get(chatRequest.getId());
-            // 加入上下文对象
-            if (contextList != null && !contextList.isEmpty()) {
-                contextList.forEach(context -> {
-                    Message message = Message.builder().role(Message.Role.USER).content(context).build();
-                    msgList.add(message);
-                });
+            // 获得该用户问题集合
+            cacheQuestion = CONTEXT_MAP.get(id);
+            // 如果不为空的话 加入上下文对象
+            if (cacheQuestion != null) {
+                // 加入此用户上下文对象
+                List<Message> messages = cacheQuestion.getMessages();
+                messages.add(m);
+                chatCompletion = ChatCompletion.builder().messages(messages).build();
+//                chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
+            } else {
+                cacheQuestion = new CacheQuestion();
+                List<Message> messages = new ArrayList<>();
+                messages.add(m);
+                cacheQuestion.setMessages(messages);
+                chatCompletion = ChatCompletion.builder().messages(messages).build();
+//                chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
+                CONTEXT_MAP.put(id, cacheQuestion);
             }
+            cacheQuestion.setLastQuestion(LocalDateTime.now());
         }
-        // 加入当前问题
-        msgList.add(Message.builder().role(Message.Role.USER).content(chatRequest.getPrompt()).build());
-        //聊天模型：gpt-3.5
-        Message message = Message.builder().role(Message.Role.USER).content("").build();
-        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
-        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
-        chatCompletionResponse.setId(UUID.randomUUID().toString());
-        return null;
+        ChatResponse chatResponse = new ChatResponse();
+        chatResponse.setId(id);
+        chatResponse.setMessage(chatCompletionResponse.getChoices().get(0).getMessage().getContent());
+        return chatResponse;
     }
 
     private OpenAiClient buildClient(String key) {

@@ -32,7 +32,7 @@ public class BaseResponse<T> {
     }
 
     public BaseResponse<T> fail(T body) {
-        return build(Status.FAIL,body).setFlag(false);
+        return build(Status.FAIL, body).setFlag(false);
     }
 
 

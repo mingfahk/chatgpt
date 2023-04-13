@@ -1,2 +1,45 @@
 server:
   port: 9988
+spring:
+  datasource:
+    username: gpt
+    password: 123456
+    url: jdbc:mysql://43.143.35.42:3306/gpt_data?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    filters: stat,wall,log4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+    type: com.alibaba.druid.pool.DruidDataSource
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+
+
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+        use-model-v3: true
+
+knife4j:
+  # 开启增强
+  enable: true
+  # 开启登录认证
+  basic:
+    enable: true
+    username: mingfahk
+    password: 123456
+

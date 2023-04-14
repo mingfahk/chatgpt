@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class ChatServiceImpl implements ChatService {
     private OpenAiKeysMapper openAiKeysMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ChatCompletionResponse getMsg(ChatRequest chatRequest) {
         String key = chatRequest.getKey();
         OpenAiClient openAiClient = buildClient(key);
@@ -49,6 +51,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ChatResponse chat(ChatOpenAiRequest chatRequest) {
         String key = chatRequest.getKey();
         Long id = chatRequest.getId() == null ? System.currentTimeMillis() : chatRequest.getId();

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mingfahk.chatgpt.mapper.OpenAiKeysMapper">
+
+    <resultMap id="BaseResultMap" type="com.mingfahk.chatgpt.pojo.domain.OpenAiKeys">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="apiKey" column="api_key" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,api_key
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from open_ai_keys
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from open_ai_keys
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from open_ai_keys
+        where  id = #{id,jdbcType=INTEGER} 
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.mingfahk.chatgpt.pojo.domain.OpenAiKeys"
+            useGeneratedKeys="true">
+        insert into open_ai_keys
+        ( id,api_key)
+        values (#{id,jdbcType=INTEGER},#{apiKey,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.mingfahk.chatgpt.pojo.domain.OpenAiKeys" useGeneratedKeys="true">
+        insert into open_ai_keys
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="apiKey != null">api_key,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id,jdbcType=INTEGER},</if>
+            <if test="apiKey != null">#{apiKey,jdbcType=VARCHAR},</if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.mingfahk.chatgpt.pojo.domain.OpenAiKeys">
+        update open_ai_keys
+        <set>
+            <if test="apiKey != null">
+                api_key = #{apiKey,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.mingfahk.chatgpt.pojo.domain.OpenAiKeys">
+        update open_ai_keys
+        set 
+            api_key =  #{apiKey,jdbcType=VARCHAR}
+        where   id = #{id,jdbcType=INTEGER} 
+    </update>
+</mapper>

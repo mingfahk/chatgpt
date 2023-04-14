@@ -2,9 +2,9 @@ server:
   port: 9988
 spring:
   datasource:
-    username: gpt
-    password: 123456
-    url: jdbc:mysql://43.143.35.42:3306/gpt_data?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    username: xxxx
+    password: xxxx
+    url: jdbc:mysql://xxxxxxxxx/gpt_data?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     initialSize: 5
     minIdle: 5

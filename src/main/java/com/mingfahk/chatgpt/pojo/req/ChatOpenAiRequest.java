@@ -11,7 +11,7 @@ public class ChatOpenAiRequest {
     private String key;
     @ApiModelProperty(value = "你的问题", example = "who are you")
     private String prompt;
-    @ApiModelProperty(value = "你的ID，第一次请求可不填写", example = "1111111111111")
+    @ApiModelProperty(value = "你的ID，第一次请求不填写，后续请求使用返回的ID，可保留上下文", example = "1111111111111")
     private Long id;
     @ApiModelProperty(value = "是否持续对话", example = "true")
     private Boolean is_continue;
